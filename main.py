@@ -3,6 +3,7 @@ import data_retrievers.market_constants as market_constants
 from simulation.montecarlo import MontecarloParameterProvider, MontecarloMultipleStocks, PortfolioSimulation
 import datetime
 import numpy as np
+import scipy.stats
 
 def testPortfolioOfflineData():
     import os
@@ -31,6 +32,12 @@ def testPortfolioOfflineData():
     print('Weights {}'.format(weights))
     print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weights)*100))
     print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weights)*100))
+    print('-----------------------------------------------------------------------')
+    print('Lowest return efficeint frontier:')
+    weights = np.array([17.04, 0, 26.82, 35.62, 20.52]) / 100
+    print('Weights {}'.format(weights))
+    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weights) * 100))
+    print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weights) * 100))
     print('-----------------------------------------------------------------------')
     print('Highest return efficeint frontier:')
     weights = np.array([0,0,0,0,100])/100
@@ -62,13 +69,13 @@ def testPortfolioOnline():
     print('7% return efficeint frontier:')
     weights = np.array([21.12,0,29.2,15.83,33.85])/100
     print('Weights {}'.format(weights))
-    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weights)*100))
+    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 100000, weights=weights)*100))
     print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weights)*100))
     print('-----------------------------------------------------------------------')
     print('Highest return efficeint frontier:')
     weights = np.array([0,0,0,0,100])/100
     print('Weights {}'.format(weights))
-    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weights)*100))
+    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 100000, weights=weights)*100))
     print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weights)*100))
 
 def testHarcodedParamsVar():
@@ -85,3 +92,9 @@ def testHarcodedParamsVar():
     portfolioSimulation = PortfolioSimulation(montecarloSimulation)
 
     return portfolioSimulation.oneDayVar(1, 10000)
+
+def testMarcowitz():
+    minMarkowitz = (0.0579 / 252, 0.0735 / np.sqrt(252))
+    maxMarkowitz = (0.0889 / 252, 0.1145 / np.sqrt(252))
+    print('One day var lowest {}%'.format(scipy.stats.norm(minMarkowitz[0],minMarkowitz[1]).ppf(0.05)*100))
+    print('One day var highest {}%'.format(scipy.stats.norm(maxMarkowitz[0],maxMarkowitz[1]).ppf(0.05)*100))
