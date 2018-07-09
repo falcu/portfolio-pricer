@@ -4,23 +4,28 @@ from simulation.montecarlo import MontecarloParameterProvider, MontecarloMultipl
 import datetime
 import numpy as np
 
-def testVarOfflineData():
+def testPortfolioOfflineData():
     import os
+    daysForHistoricalCalc = 180*2
+    referenceDate = datetime.date(2018, 6, 22)
+
     mainPath = os.path.dirname(os.path.realpath(__file__))
     indexesPath = os.path.join(mainPath,'data','indexes')
     fxPath = os.path.join(mainPath,'data','fx')
-    stockProvider = EnhancedValuesProvider(
-        OfflinePriceDataProvider(indexesPath,
-                                 market_constants.INDEXES_TICKERS))
-    ccyProvider = EnhancedValuesProvider(
-        OfflinePriceDataProvider(fxPath, market_constants.CCY))
+    stockProvider = EnhancedValuesProvider(OfflinePriceDataProvider(indexesPath, market_constants.INDEXES_TICKERS))
+    ccyProvider = EnhancedValuesProvider( OfflinePriceDataProvider(fxPath, market_constants.CCY))
     montecarloParams = MontecarloParameterProvider(stockProvider, ccyProvider,
-                                                   referenceDate=datetime.date(2018, 6, 22)).montecarloParameters()
+                                                   referenceDate=referenceDate, historyInDays=daysForHistoricalCalc).montecarloParameters()
 
     montecarloSimulation = MontecarloMultipleStocks(montecarloParams.initialPricesVector,
                                                     montecarloParams.meanVector, montecarloParams.volatilityVector, montecarloParams.corrMatrix)
     portfolioSimulation = PortfolioSimulation(montecarloSimulation)
     montecarloParams.show()
+    print('-----------------------------------------------------------------------')
+    print('Equal Weights(not efficient frontier):')
+    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=None)*100))
+    print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=None) * 100))
+    print('-----------------------------------------------------------------------')
     print('7% return efficeint frontier:')
     weights = np.array([21.12,0,29.2,15.83,33.85])/100
     print('Weights {}'.format(weights))
@@ -33,21 +38,38 @@ def testVarOfflineData():
     print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weights)*100))
     print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weights)*100))
 
-def testVarOnlineData():
+def testPortfolioOnline():
     start = datetime.datetime(2015,1,1)
+    daysForHistoricalCalc = 180 * 2
+    referenceDate = datetime.date(2018, 6, 22)
+
+
     stockProvider = EnhancedValuesProvider(OnlinePriceDataProvider(market_constants.INDEXES_TICKERS, start=start))
     ccyProvider = EnhancedValuesProvider(OnlinePriceDataProvider(market_constants.CCY, start=start),)
     montecarloParams = MontecarloParameterProvider(stockProvider, ccyProvider,
-                                                   referenceDate=datetime.date(2018, 6, 22)).montecarloParameters()
+                                                   referenceDate=referenceDate, historyInDays=daysForHistoricalCalc).montecarloParameters()
 
-    montecarloParams.show()
     montecarloSimulation = MontecarloMultipleStocks(montecarloParams.initialPricesVector,
                                                     montecarloParams.meanVector, montecarloParams.volatilityVector, montecarloParams.corrMatrix)
     portfolioSimulation = PortfolioSimulation(montecarloSimulation)
 
-    print('')
-    print("1 day var {}".format(portfolioSimulation.oneDayVar(1,10000)*100))
-    print("Expected Return {}".format(portfolioSimulation.expectedReturns()*100))
+    montecarloParams.show()
+    print('-----------------------------------------------------------------------')
+    print('Equal Weights(not efficient frontier):')
+    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=None)*100))
+    print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=None) * 100))
+    print('-----------------------------------------------------------------------')
+    print('7% return efficeint frontier:')
+    weights = np.array([21.12,0,29.2,15.83,33.85])/100
+    print('Weights {}'.format(weights))
+    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weights)*100))
+    print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weights)*100))
+    print('-----------------------------------------------------------------------')
+    print('Highest return efficeint frontier:')
+    weights = np.array([0,0,0,0,100])/100
+    print('Weights {}'.format(weights))
+    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weights)*100))
+    print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weights)*100))
 
 def testHarcodedParamsVar():
     priceVector = np.array([  9999.99838895,  11168.84721966,   4619.252541  , 413.67599052, 508.6407107 ])
