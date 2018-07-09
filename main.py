@@ -15,25 +15,30 @@ def testVarOfflineData():
     ccyProvider = EnhancedValuesProvider(
         OfflinePriceDataProvider(fxPath, market_constants.CCY))
     montecarloParams = MontecarloParameterProvider(stockProvider, ccyProvider,
-                                                   referenceDate=datetime.date(2018, 6, 26)).montecarloParameters()
+                                                   referenceDate=datetime.date(2018, 6, 22)).montecarloParameters()
 
     montecarloSimulation = MontecarloMultipleStocks(montecarloParams.initialPricesVector,
                                                     montecarloParams.meanVector, montecarloParams.volatilityVector, montecarloParams.corrMatrix)
     portfolioSimulation = PortfolioSimulation(montecarloSimulation)
-
-    return portfolioSimulation.oneDayVar(1,10000)
+    montecarloParams.show()
+    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=None)*100))
+    print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=None)*100))
 
 def testVarOnlineData():
-    stockProvider = EnhancedValuesProvider(OnlinePriceDataProvider(market_constants.INDEXES_TICKERS))
-    ccyProvider = EnhancedValuesProvider(OnlinePriceDataProvider(market_constants.CCY))
+    start = datetime.datetime(2015,1,1)
+    stockProvider = EnhancedValuesProvider(OnlinePriceDataProvider(market_constants.INDEXES_TICKERS, start=start))
+    ccyProvider = EnhancedValuesProvider(OnlinePriceDataProvider(market_constants.CCY, start=start),)
     montecarloParams = MontecarloParameterProvider(stockProvider, ccyProvider,
-                                                   referenceDate=datetime.date(2018, 6, 26)).montecarloParameters()
+                                                   referenceDate=datetime.date(2018, 6, 22)).montecarloParameters()
 
+    montecarloParams.show()
     montecarloSimulation = MontecarloMultipleStocks(montecarloParams.initialPricesVector,
                                                     montecarloParams.meanVector, montecarloParams.volatilityVector, montecarloParams.corrMatrix)
     portfolioSimulation = PortfolioSimulation(montecarloSimulation)
 
-    return portfolioSimulation.oneDayVar(1,10000)
+    print('')
+    print("1 day var {}".format(portfolioSimulation.oneDayVar(1,10000)*100))
+    print("Expected Return {}".format(portfolioSimulation.expectedReturns()*100))
 
 def testHarcodedParamsVar():
     priceVector = np.array([  9999.99838895,  11168.84721966,   4619.252541  , 413.67599052, 508.6407107 ])
@@ -49,7 +54,3 @@ def testHarcodedParamsVar():
     portfolioSimulation = PortfolioSimulation(montecarloSimulation)
 
     return portfolioSimulation.oneDayVar(1, 10000)
-
-def testOs():
-    import os
-    print(os.path.dirname(os.path.realpath(__file__)))

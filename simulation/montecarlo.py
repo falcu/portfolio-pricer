@@ -11,6 +11,11 @@ class SimulationParameters:
         self.volatilityVector=volatilityVector
         self.corrMatrix=corrMatrix
 
+    def show(self):
+        print('expected return {}'.format(self.meanVector * 100))
+        print('volatility {}'.format(self.volatilityVector * 100))
+        print('Corr {}'.format(self.corrMatrix))
+
 
 class MontecarloParameterProvider:
 
@@ -102,16 +107,26 @@ class PortfolioSimulation:
 
     def simulateReturns(self, periods, trajectories, weights=None):
         pricesSim = self.montecarloSimulator.simulate( periods, trajectories )
-        weights = weights or 1.0/pricesSim.shape[2]
+        weights = self._weights(weights)
         pricesSimTranspose = np.transpose(pricesSim,(0,2,1)) #Not transposing trajectory dimension
         returnsSim = np.diff(np.log(pricesSimTranspose))
         returnsSimTransposed = np.transpose(returnsSim,(0,2,1))
         return np.sum(returnsSimTransposed*weights,2)
+
+    def _weights(self, weights=None):
+        return 1.0/self._stocksNumber() if weights is None else weights
+
+    def _stocksNumber(self):
+        return len(self.montecarloSimulator.priceVector)
 
     def oneDayVar(self, periods, trajectories, weights=None, alpha=0.05):
         portfolioReturns = self.simulateReturns( periods, trajectories, weights)
         indexingByPeriod = np.sort( np.transpose(portfolioReturns,(1,0)), 1)
         alphaVarIndex = int(trajectories*alpha)
         return indexingByPeriod[0:,alphaVarIndex]
+
+    def expectedReturns(self, weights=None):
+        weights = self._weights(weights)
+        return np.sum(self.montecarloSimulator.driftVector*weights)
 
 
