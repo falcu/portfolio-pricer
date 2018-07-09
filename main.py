@@ -21,7 +21,12 @@ def testVarOfflineData():
                                                     montecarloParams.meanVector, montecarloParams.volatilityVector, montecarloParams.corrMatrix)
     portfolioSimulation = PortfolioSimulation(montecarloSimulation)
     montecarloParams.show()
+    print('Lowest return efficeint frontier:')
     weightsSeventPercentEfficient = np.array([21.12,0,29.2,15.83,33.85])/100
+    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weightsSeventPercentEfficient)*100))
+    print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weightsSeventPercentEfficient)*100))
+    print('Highest return efficeint frontier:')
+    weightsSeventPercentEfficient = np.array([0,0,0,0,100])/100
     print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weightsSeventPercentEfficient)*100))
     print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weightsSeventPercentEfficient)*100))
 
