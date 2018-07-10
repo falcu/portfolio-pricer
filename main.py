@@ -1,6 +1,7 @@
 from data_retrievers.data_provider import  EnhancedValuesProvider, OfflinePriceDataProvider, OnlinePriceDataProvider
 import data_retrievers.market_constants as market_constants
 from simulation.montecarlo import MontecarloParameterProvider, MontecarloMultipleStocks, PortfolioSimulation
+from optimizer.markowitz import MarkowitzWeightsCalculator, PortfolioOptimizer
 import datetime
 import numpy as np
 import scipy.stats
@@ -129,3 +130,30 @@ def testPortfolio():
     portfolioSimulation = PortfolioSimulation(montecarloSimulation)
 
     return portfolioSimulation
+
+def optimizePorfolio():
+    import os
+    daysForHistoricalCalc = 180 * 2
+    referenceDate = datetime.date(2018, 6, 22)
+
+    mainPath = os.path.dirname(os.path.realpath(__file__))
+    indexesPath = os.path.join(mainPath, 'data', 'indexes')
+    fxPath = os.path.join(mainPath, 'data', 'fx')
+    stockProvider = EnhancedValuesProvider(OfflinePriceDataProvider(indexesPath, market_constants.INDEXES_TICKERS))
+    ccyProvider = EnhancedValuesProvider(OfflinePriceDataProvider(fxPath, market_constants.CCY))
+    montecarloParams = MontecarloParameterProvider(stockProvider, ccyProvider,
+                                                   referenceDate=referenceDate,
+                                                   historyInDays=daysForHistoricalCalc).montecarloParameters()
+
+    montecarloSimulation = MontecarloMultipleStocks(montecarloParams.initialPricesVector,
+                                                    montecarloParams.meanVector, montecarloParams.volatilityVector,
+                                                    montecarloParams.corrMatrix)
+    portfolioSimulation = PortfolioSimulation(montecarloSimulation)
+
+    weightsCalculator = MarkowitzWeightsCalculator()
+    weightsCalculator.addPortfolioSegment((0.0, np.inf), [6.5669, -9.0299, 1.9549, -3.4759, 3.9840],
+                                          [0.1672, -0.0026, 0.2657, 0.3801, 0.1895])
+
+    optimizer = PortfolioOptimizer( portfolioSimulation, weightsCalculator)
+    weights, oneDayVar = optimizer.optimize(np.linspace(300,7,5000))
+    print("Maximized Return {}".format(portfolioSimulation.expectedReturns(weights)))

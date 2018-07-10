@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0a65146b-94fc-4c9f-9182-cf33fb92aed1" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/optimizer/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/optimizer/markowitz.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/simulation/montecarlo.py" afterPath="$PROJECT_DIR$/simulation/montecarlo.py" />
@@ -40,8 +42,8 @@
       <file leaf-file-name="montecarlo.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/simulation/montecarlo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="116" column="50" lean-forward="true" selection-start-line="116" selection-start-column="50" selection-end-line="116" selection-end-column="50" />
+            <state relative-caret-position="-143">
+              <caret line="109" column="51" lean-forward="true" selection-start-line="109" selection-start-column="30" selection-end-line="109" selection-end-column="51" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -49,11 +51,21 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="markowitz.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/optimizer/markowitz.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="177">
+              <caret line="31" column="61" lean-forward="false" selection-start-line="31" selection-start-column="61" selection-end-line="31" selection-end-column="61" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="483">
-              <caret line="53" column="49" lean-forward="false" selection-start-line="53" selection-start-column="49" selection-end-line="53" selection-end-column="49" />
+            <state relative-caret-position="432">
+              <caret line="157" column="68" lean-forward="false" selection-start-line="157" selection-start-column="68" selection-end-line="157" selection-end-column="68" />
               <folding>
                 <element signature="e#0#116#0" expanded="true" />
               </folding>
@@ -117,6 +129,8 @@
         <option value="$PROJECT_DIR$/data_retrievers/market_constants.py" />
         <option value="$PROJECT_DIR$/data_retrievers/data_provider.py" />
         <option value="$PROJECT_DIR$/simulation/montecarlo.py" />
+        <option value="$PROJECT_DIR$/data_retrievers/markowitz.py" />
+        <option value="$PROJECT_DIR$/optimizer/markowitz.py" />
         <option value="$PROJECT_DIR$/main.py" />
       </list>
     </option>
@@ -164,6 +178,11 @@
             <path>
               <item name="PortfolioPricer" type="b2602c69:ProjectViewProjectNode" />
               <item name="PortfolioPricer" type="462c0819:PsiDirectoryNode" />
+              <item name="optimizer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PortfolioPricer" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PortfolioPricer" type="462c0819:PsiDirectoryNode" />
               <item name="simulation" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -174,10 +193,11 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/simulation/montecarlo.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/optimizer" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Guido\Master Finanzas\2018\Primer Trimestre\MECAF\TPS\TP3\PortfolioPricer\optimizer" />
       <recent name="D:\Guido\Master Finanzas\2018\Primer Trimestre\MECAF\TPS\TP3\PortfolioPricer" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
@@ -275,7 +295,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/main.py</url>
-          <line>72</line>
+          <line>73</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -290,7 +310,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/simulation/montecarlo.py</url>
-          <line>112</line>
+          <line>114</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
       </breakpoints>
@@ -299,14 +319,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/pandas_datareader/yahoo/daily.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="162" column="0" lean-forward="false" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/fix_yahoo_finance/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="299">
@@ -343,18 +355,34 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/simulation/montecarlo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="116" column="50" lean-forward="true" selection-start-line="116" selection-start-column="50" selection-end-line="116" selection-end-column="50" />
+        <state relative-caret-position="-143">
+          <caret line="109" column="51" lean-forward="true" selection-start-line="109" selection-start-column="30" selection-end-line="109" selection-end-column="51" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/pandas_datareader/yahoo/daily.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="162" column="0" lean-forward="false" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/optimizer/markowitz.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="31" column="61" lean-forward="false" selection-start-line="31" selection-start-column="61" selection-end-line="31" selection-end-column="61" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="53" column="49" lean-forward="false" selection-start-line="53" selection-start-column="49" selection-end-line="53" selection-end-column="49" />
+        <state relative-caret-position="432">
+          <caret line="157" column="68" lean-forward="false" selection-start-line="157" selection-start-column="68" selection-end-line="157" selection-end-column="68" />
           <folding>
             <element signature="e#0#116#0" expanded="true" />
           </folding>

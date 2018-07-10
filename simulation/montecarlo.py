@@ -102,16 +102,24 @@ class MontecarloMultipleStocks:
 
 
 class PortfolioSimulation:
-    def __init__(self, montecarloSimulator):
+    def __init__(self, montecarloSimulator, holdSimulation=False):
         self.montecarloSimulator = montecarloSimulator
+        self.holdSimulation = holdSimulation
+        self._lastPricesSimulation = None
 
     def simulateReturns(self, periods, trajectories, weights=None):
-        pricesSim = self.montecarloSimulator.simulate( periods, trajectories )
+        pricesSim = self.simulatePrices( periods, trajectories )
         weights = self._weights(weights)
         pricesSimTranspose = np.transpose(pricesSim,(0,2,1)) #Not transposing trajectory dimension
         returnsSim = np.diff(np.log(pricesSimTranspose))
         returnsSimTransposed = np.transpose(returnsSim,(0,2,1))
         return np.sum(returnsSimTransposed*self._sign(weights)*weights,2)
+
+    def simulatePrices(self, periods, trajectories):
+        if not self.holdSimulation or self._lastPricesSimulation is None:
+            self._lastPricesSimulation = self.montecarloSimulator.simulate( periods, trajectories )
+
+        return self._lastPricesSimulation
 
     def _weights(self, weights=None):
         return 1.0/self._stocksNumber() if weights is None else weights
