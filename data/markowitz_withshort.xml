@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<portopt numAssets="5" title="">
+   <assets>
+      <asset alpha="6.62655266  " high="" index="0" low="0" name="^FTSE" sigma="10.88244583 "/>
+      <asset alpha="-4.05537571  " high="" index="1" low="0" name="^IBEX" sigma="13.75282179  "/>
+      <asset alpha="7.35183028  " high="" index="2" low="0" name="^AORD" sigma="11.45018202  "/>
+      <asset alpha="2.79795072  " high="" index="3" low="0" name="^KLSE" sigma="9.8271903  "/>
+      <asset alpha="8.89421267 " high="" index="4" low="0" name="^BSESN" sigma="11.4503814  "/>
+   </assets>
+   <correlations>
+      <cor index1="0" index2="1" val="0.59676229  "/>
+      <cor index1="0" index2="2" val="0.35457388  "/>
+      <cor index1="0" index2="3" val="0.36952879  "/>
+      <cor index1="0" index2="4" val="0.32296749 "/>
+      <cor index1="1" index2="2" val="0.33322507  "/>
+      <cor index1="1" index2="3" val="0.32670851   "/>
+      <cor index1="1" index2="4" val="0.29431566 "/>
+      <cor index1="2" index2="3" val="0.13097941 "/>
+      <cor index1="2" index2="4" val="0.25211761 "/>
+      <cor index1="3" index2="4" val="0.32066741 "/>
+   </correlations>
+</portopt>
