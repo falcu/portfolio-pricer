@@ -111,10 +111,14 @@ class PortfolioSimulation:
         pricesSimTranspose = np.transpose(pricesSim,(0,2,1)) #Not transposing trajectory dimension
         returnsSim = np.diff(np.log(pricesSimTranspose))
         returnsSimTransposed = np.transpose(returnsSim,(0,2,1))
-        return np.sum(returnsSimTransposed*weights,2)
+        return np.sum(returnsSimTransposed*self._sign(weights)*weights,2)
 
     def _weights(self, weights=None):
         return 1.0/self._stocksNumber() if weights is None else weights
+
+    def _sign(self, weights=None):
+        #In case short selling is allowed
+        return [1]*self._stocksNumber() if weights is None else np.sign(weights)
 
     def _stocksNumber(self):
         return len(self.montecarloSimulator.priceVector)

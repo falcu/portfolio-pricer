@@ -44,6 +44,18 @@ def testPortfolioOfflineData():
     print('Weights {}'.format(weights))
     print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weights)*100))
     print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weights)*100))
+    print('-----------------------------------------------------------------------')
+    print('8% return efficeint frontier with short selling:')
+    weights = np.array([28.62, -16.62, 30.12, 31.71, 26.17]) / 100
+    print('Weights {}'.format(weights))
+    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weights) * 100))
+    print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weights) * 100))
+    print('-----------------------------------------------------------------------')
+    print('Highest return efficeint frontier with short selling:')
+    weights = np.array([91.10, -103.65, 48.70, 0, 63.85]) / 100
+    print('Weights {}'.format(weights))
+    print("1 day var {}%".format(portfolioSimulation.oneDayVar(1, 10000, weights=weights) * 100))
+    print("Expected Return {}%".format(portfolioSimulation.expectedReturns(weights=weights) * 100))
 
 def testPortfolioOnline():
     start = datetime.datetime(2015,1,1)
@@ -98,3 +110,22 @@ def testMarcowitz():
     maxMarkowitz = (0.0889 / 252, 0.1145 / np.sqrt(252))
     print('One day var lowest {}%'.format(scipy.stats.norm(minMarkowitz[0],minMarkowitz[1]).ppf(0.05)*100))
     print('One day var highest {}%'.format(scipy.stats.norm(maxMarkowitz[0],maxMarkowitz[1]).ppf(0.05)*100))
+
+def testPortfolio():
+    import os
+    daysForHistoricalCalc = 180*2
+    referenceDate = datetime.date(2018, 6, 22)
+
+    mainPath = os.path.dirname(os.path.realpath(__file__))
+    indexesPath = os.path.join(mainPath,'data','indexes')
+    fxPath = os.path.join(mainPath,'data','fx')
+    stockProvider = EnhancedValuesProvider(OfflinePriceDataProvider(indexesPath, market_constants.INDEXES_TICKERS))
+    ccyProvider = EnhancedValuesProvider( OfflinePriceDataProvider(fxPath, market_constants.CCY))
+    montecarloParams = MontecarloParameterProvider(stockProvider, ccyProvider,
+                                                   referenceDate=referenceDate, historyInDays=daysForHistoricalCalc).montecarloParameters()
+
+    montecarloSimulation = MontecarloMultipleStocks(montecarloParams.initialPricesVector,
+                                                    montecarloParams.meanVector, montecarloParams.volatilityVector, montecarloParams.corrMatrix)
+    portfolioSimulation = PortfolioSimulation(montecarloSimulation)
+
+    return portfolioSimulation
