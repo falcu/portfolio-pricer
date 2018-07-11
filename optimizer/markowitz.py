@@ -28,17 +28,17 @@ class PortfolioOptimizer:
         self.portfolioSimulator = portfolioSimulator
         self.markowitzCalculator = markowitzCalculator
 
-    def optimize(self, riskAdversionValues, oneDayVar=-0.015, holdSimulation=True, periods=1, trajectories=100000):
+    def optimize(self, riskAdversionValues, maxOeDayVar=-0.015, holdSimulation=True, periods=1, trajectories=100000):
+
         self.portfolioSimulator.holdSimulation=holdSimulation
         for riskAdversion in riskAdversionValues:
             weights = self.markowitzCalculator.weights(riskAdversion)
             oneDayVarsSim = self.portfolioSimulator.oneDayVar(periods, trajectories, weights=weights)
-            #print("Risk adversion {}, weights {}, one day var {}".format(riskAdversion,weights,oneDayVarsSim))
-            if any( oneDayVarsSim<oneDayVar):
-                print("Risk adversion {}, weights {}, one day var {}".format(riskAdversion, weights, oneDayVarsSim))
+            if any( oneDayVarsSim>maxOeDayVar):
+                #print("Risk adversion {}, weights {}, one day var {}".format(riskAdversion, weights, oneDayVarsSim))
                 return weights, oneDayVarsSim
 
-        print("Risk adversion {}, weights {}, one day var {}".format(riskAdversion, weights, oneDayVarsSim))
+        #print("Risk adversion {}, weights {}, one day var {}".format(riskAdversion, weights, oneDayVarsSim))
         return weights, oneDayVarsSim
 
 

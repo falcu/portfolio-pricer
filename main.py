@@ -6,6 +6,88 @@ import datetime
 import numpy as np
 import scipy.stats
 
+def ej1(get_data_mode='offline'):
+    daysForHistoricalCalc = 360
+    referenceDate = datetime.date(2018, 6, 22)
+    indexesPriceProvider = _makePriceProvider(get_data_mode, market_constants.INDEXES_TICKERS, 'indexes')
+    fxPriceProvider = _makePriceProvider(get_data_mode, market_constants.CCY, 'fx')
+
+    portfolioSimulator = _makePortfolioSimulator(indexesPriceProvider, fxPriceProvider, referenceDate, daysForHistoricalCalc)
+    print('Ejercicio 1')
+    print('Invertido Partes Iguales')
+    print("Var 1 dia {}%".format(portfolioSimulator.oneDayVar(1, 100000)*100))
+    print("Rendimiento Esperado {}%".format(portfolioSimulator.expectedReturns() * 100))
+
+def ej2(get_data_mode='offline'):
+    daysForHistoricalCalc = 360
+    referenceDate = datetime.date(2018, 6, 22)
+    indexesPriceProvider = _makePriceProvider(get_data_mode, market_constants.INDEXES_TICKERS, 'indexes')
+    fxPriceProvider = _makePriceProvider(get_data_mode, market_constants.CCY, 'fx')
+    portfolioSimulator = _makePortfolioSimulator(indexesPriceProvider, fxPriceProvider, referenceDate, daysForHistoricalCalc)
+
+    adversionRiskValues = np.linspace(0.1, 300, 5000)
+
+    #MARKOWITZ NO SHORT SELLING
+    markowitzNoShortSelling = MarkowitzWeightsCalculator()
+    markowitzNoShortSelling.addPortfolioSegment((0.0, 0.43), [0.0, 0.0, 0.0, 0.0, 0.0],
+                                                [0.0, 0.0, 0.0, 0.0, 1.0])
+    markowitzNoShortSelling.addPortfolioSegment((0.43, 1.61), [0.0, 0.0, -0.2272, 0.0, 0.2272],
+                                                [0.0, 0.0, 0.5290, 0.0, 0.4710])
+    markowitzNoShortSelling.addPortfolioSegment((1.61, 11.07), [-0.5448, 0.0, 0.0667, 0.0, 0.4781],
+                                                [0.3380, 0.0, 0.3466, 0.0, 0.3154])
+    markowitzNoShortSelling.addPortfolioSegment((11.07, np.inf), [1.4181, 0.0, 0.7086, -4.2147, 2.0880],
+                                                [0.1606, 0.0, 0.2886, 0.3808, 0.1699])
+    optimizerNoShortSelling = PortfolioOptimizer(portfolioSimulator, markowitzNoShortSelling)
+    print("Optimizando Portfolio Sin venta en corto permitida")
+    weights, oneDayVar = optimizerNoShortSelling.optimize(adversionRiskValues, maxOeDayVar=-0.015, periods=1, trajectories=100000)
+    print("Var 1 dia {}%".format(oneDayVar * 100))
+    weightsMsg = ['{}: {}'.format(ticker,weight) for ticker,weight in zip(market_constants.INDEXES_TICKERS,weights)]
+    print("Composcion {}".format(', '.join(weightsMsg)))
+    print("Rendimiento Esperado {}%".format(portfolioSimulator.expectedReturns(weights)*100))
+
+    # MARKOWITZ SHORT SELLING
+    markowitzWithShortSelling = MarkowitzWeightsCalculator()
+    markowitzWithShortSelling.addPortfolioSegment((0.0, np.inf), [6.5669, -9.0299, 1.9549, -3.4759, 3.9840],
+                                          [0.1672, -0.0026, 0.2657, 0.3801, 0.1895])
+    optimizerWithShortSelling = PortfolioOptimizer(portfolioSimulator, markowitzWithShortSelling)
+
+    print('------------------------------------------------------')
+    print("Optimizando Portfolio Con venta en corto permitida")
+    weights, oneDayVar = optimizerWithShortSelling.optimize(adversionRiskValues, maxOeDayVar=-0.015, periods=1, trajectories=100000)
+    print("Var 1 dia {}%".format(oneDayVar * 100))
+    weightsMsg = ['{}: {}'.format(ticker,weight) for ticker,weight in zip(market_constants.INDEXES_TICKERS,weights)]
+    print("Composcion {}".format(', '.join(weightsMsg)))
+    print("Rendimiento Esperado {}%".format(portfolioSimulator.expectedReturns(weights)*100))
+
+
+def _filePath(*args):
+    import os
+    mainPath = os.path.dirname(os.path.realpath(__file__))
+    return os.path.join(mainPath,*args)
+
+def _makePriceProvider(get_data_mode, tickers, providerName):
+    if get_data_mode=='offline':
+        return OfflinePriceDataProvider(_filePath('data',providerName), tickers)
+    elif get_data_mode=='online':
+        return OnlinePriceDataProvider(tickers, start=datetime.datetime(2015,1,1))
+
+def _makeDataProvider(priceProvider):
+    return EnhancedValuesProvider(priceProvider)
+
+def _makePortfolioSimulator(indexesPriceProvider, fxPriceProvider, referenceDate, daysForHistoricalCalc):
+    indexesDataProvider = _makeDataProvider(indexesPriceProvider)
+    fxDataProvider = _makeDataProvider(fxPriceProvider)
+    montecarloParams = MontecarloParameterProvider(indexesDataProvider, fxDataProvider, referenceDate=referenceDate,
+                                                   historyInDays=daysForHistoricalCalc).montecarloParameters()
+    montecarloSimulation = MontecarloMultipleStocks(montecarloParams.initialPricesVector,
+                                                    montecarloParams.meanVector, montecarloParams.volatilityVector,
+                                                    montecarloParams.corrMatrix)
+    portfolioSimulation = PortfolioSimulation(montecarloSimulation)
+
+    return portfolioSimulation
+
+
+
 def testPortfolioOfflineData():
     import os
     daysForHistoricalCalc = 180*2
